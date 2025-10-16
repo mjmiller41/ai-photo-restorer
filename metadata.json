@@ -1,0 +1,5 @@
+{
+  "name": "AI Photo Restorer",
+  "description": "Upload old, damaged black and white photos and use AI to restore them. This tool removes scratches, fixes faded areas, and enhances details to bring your memories back to life.",
+  "requestFramePermissions": []
+}
