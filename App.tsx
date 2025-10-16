@@ -60,9 +60,9 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         <button
           onClick={() => onRestore(false)}
           disabled={isLoading}
-          className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-white transition-transform transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed"
+          className="flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 bg-gray-200 text-gray-800 font-bold text-lg rounded-lg shadow-lg hover:bg-white transition-transform transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed"
         >
-          <SparkleIcon className="w-5 h-5" />
+          <SparkleIcon className="w-6 h-6" />
           Restore B&W
         </button>
         <button
@@ -71,7 +71,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           className="flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 bg-amber-500 text-gray-900 font-bold text-lg rounded-lg shadow-lg hover:bg-amber-600 transition-transform transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed"
         >
           <ColorPaletteIcon className="w-6 h-6" />
-          Colorize Restored
+          Restore & Colorize
         </button>
       </div>
     );
