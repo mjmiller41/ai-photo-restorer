@@ -133,7 +133,7 @@ const App: React.FC = () => {
             <div className="text-center max-w-2xl">
               <h2 className="text-3xl md:text-4xl font-bold mb-2">Bring Your Old Photos Back to Life</h2>
               <p className="text-gray-400">
-                Our AI-powered tool automatically removes scratches, enhances details, and can even colorize your cherished memories.
+                Bring your old photos back to life with SnapStitch. Our AI automatically removes scratches, enhances details, and colorizes cherished memories in seconds.
               </p>
             </div>
             <ImageUploader onImageUpload={handleImageUpload} setError={setError} />

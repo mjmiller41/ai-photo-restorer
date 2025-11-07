@@ -22,24 +22,24 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, setError }
     }
   }, [onImageUpload, setError]);
 
-  const handleDragEnter = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragEnter = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
   }, []);
 
-  const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragLeave = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
   }, []);
 
-  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     e.stopPropagation();
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
@@ -47,13 +47,15 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, setError }
   }, [handleFileChange]);
 
   return (
-    <div
+    <div className='select-none text-center w-full'>
+      {/*
       className={`relative w-full max-w-xl mx-auto border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 ${isDragging ? 'border-amber-400 bg-gray-800/50' : 'border-gray-600 hover:border-gray-500'}`}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-    >
+      >
+       */}
       <input
         type="file"
         id="file-upload"
@@ -61,7 +63,14 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, setError }
         accept="image/*"
         onChange={(e) => handleFileChange(e.target.files)}
       />
-      <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center justify-center space-y-4">
+      <label htmlFor="file-upload"
+        className={`cursor-pointer flex flex-col items-center justify-center space-y-4 w-full max-w-xl mx-auto border-2 border-dashed rounded-lg p-8 transition-all duration-300 ${isDragging ? 'border-amber-400 bg-gray-800/50' : 'border-gray-600 hover:border-gray-500'}`}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
+        {/* <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center justify-center space-y-4">*/}
         <UploadIcon className="w-16 h-16 text-gray-500" />
         <p className="text-gray-400">
           <span className="font-semibold text-amber-400">Click to upload</span> or drag and drop
