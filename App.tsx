@@ -171,7 +171,7 @@ const App: React.FC = () => {
         )}
       </main>
       <footer className="text-center py-4 text-gray-600 text-sm">
-        <p>Powered by Gemini AI Nano Banana. Created for demonstration purposes.</p>
+        <p>© 2025 SnapStitch. Powered by Google Gemini.</p>
       </footer>
     </div>
   );
