@@ -7,7 +7,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 flex items-center">
         <img src="/assets/images/logo_3.5x1_transparent-bg.png" alt="App Logo" className="h-[2rem]"/>
         <h1 className="text-xl md:text-2xl font-bold text-gray-100 tracking-wider">
-          : AI Photo Restoration & Colorize Tool
+          <span className="hidden text-[#ffd700]">SnapStitch</span>: AI Photo Restoration & Colorize Tool
         </h1>
       </div>
     </header>
