@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.obsidian
+
+Google Cloud Service Account Keys
+gcloud-service-account-keys.json

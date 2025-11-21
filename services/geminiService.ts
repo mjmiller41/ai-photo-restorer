@@ -4,6 +4,7 @@ import { RESTORATION_PROMPT, COLORIZE_PROMPT } from './prompts';
 
 // Ensure API_KEY is available, though in a real app this would be more secure.
 const apiKey = process.env.API_KEY;
+
 if (!apiKey) {
 	throw new Error("API_KEY environment variable is not set");
 }
@@ -12,11 +13,12 @@ const ai = new GoogleGenAI({ apiKey });
 
 export const restorePhoto = async (imageFile: File, colorize: boolean): Promise<string> => {
 	try {
+		console.log(apiKey);
 		const { base64, mimeType } = await fileToBase64(imageFile);
 		const prompt = colorize ? COLORIZE_PROMPT : RESTORATION_PROMPT;
 
 		const response = await ai.models.generateContent({
-			model: 'gemini-2.0-flash',
+			model: 'gemini-2.5-flash-image',
 			contents: {
 				parts: [
 					{
