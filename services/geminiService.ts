@@ -3,7 +3,7 @@ import { fileToBase64 } from '../utils/fileUtils';
 import { RESTORATION_PROMPT, COLORIZE_PROMPT } from './prompts';
 
 // Ensure API_KEY is available, though in a real app this would be more secure.
-const apiKey = process.env.API_KEY;
+const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
 
 if (!apiKey) {
 	throw new Error("API_KEY environment variable is not set");
