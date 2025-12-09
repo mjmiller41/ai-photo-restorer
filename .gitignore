@@ -23,6 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 .obsidian
+.agent
 
 Google Cloud Service Account Keys
 gcloud-service-account-keys.json
