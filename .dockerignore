@@ -1,9 +1,0 @@
-node_modules
-dist
-.git
-.github
-.env
-.env.local
-.DS_Store
-coverage
-gcloud-service-account-keys.json
