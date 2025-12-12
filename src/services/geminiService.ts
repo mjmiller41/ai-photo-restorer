@@ -13,7 +13,6 @@ const ai = new GoogleGenAI({ apiKey });
 
 export const restorePhoto = async (imageFile: File, colorize: boolean): Promise<string> => {
 	try {
-		console.log(apiKey);
 		const { base64, mimeType } = await fileToBase64(imageFile);
 		const prompt = colorize ? COLORIZE_PROMPT : RESTORATION_PROMPT;
 
