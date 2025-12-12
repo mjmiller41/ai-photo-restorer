@@ -49,7 +49,9 @@ export const restorePhoto = async (imageFile: File, colorize: boolean): Promise<
 
 	} catch (error) {
 		console.error("Error during photo restoration:", error);
-		if (error instanceof Error) {
+		if (error?.error instanceof Error) {
+			throw new Error(`Failed to restore photo: ${error.error.message}`);
+		} else if (error instanceof Error) {
 			throw new Error(`Failed to restore photo: ${error.message}`);
 		}
 		throw new Error("An unknown error occurred during photo restoration.");
