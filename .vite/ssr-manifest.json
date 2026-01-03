@@ -9,14 +9,14 @@
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/prop-types/index.js?commonjs-es-import": [],
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/prop-types/index.js?commonjs-module": [],
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/react-dom/cjs/react-dom-client.production.js?commonjs-exports": [
-    "/ai-photo-restorer/assets/client-DH5qYOYC.js"
+    "/assets/client-CX56WGTl.js"
   ],
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/react-dom/cjs/react-dom.production.js?commonjs-exports": [],
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/react-dom/client.js?commonjs-es-import": [
-    "/ai-photo-restorer/assets/client-DH5qYOYC.js"
+    "/assets/client-CX56WGTl.js"
   ],
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/react-dom/client.js?commonjs-module": [
-    "/ai-photo-restorer/assets/client-DH5qYOYC.js"
+    "/assets/client-CX56WGTl.js"
   ],
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/react-dom/index.js?commonjs-es-import": [],
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/react-dom/index.js?commonjs-module": [],
@@ -27,10 +27,10 @@
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/react/jsx-runtime.js?commonjs-es-import": [],
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/react/jsx-runtime.js?commonjs-module": [],
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/scheduler/cjs/scheduler.production.js?commonjs-exports": [
-    "/ai-photo-restorer/assets/client-DH5qYOYC.js"
+    "/assets/client-CX56WGTl.js"
   ],
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/scheduler/index.js?commonjs-module": [
-    "/ai-photo-restorer/assets/client-DH5qYOYC.js"
+    "/assets/client-CX56WGTl.js"
   ],
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/style-to-js/cjs/index.js?commonjs-es-import": [],
   "\u0000/home/runner/work/ai-photo-restorer/ai-photo-restorer/node_modules/style-to-js/cjs/utilities.js?commonjs-exports": [],
@@ -188,11 +188,11 @@
   "node_modules/property-information/lib/xml.js": [],
   "node_modules/property-information/lib/xmlns.js": [],
   "node_modules/react-dom/cjs/react-dom-client.production.js": [
-    "/ai-photo-restorer/assets/client-DH5qYOYC.js"
+    "/assets/client-CX56WGTl.js"
   ],
   "node_modules/react-dom/cjs/react-dom.production.js": [],
   "node_modules/react-dom/client.js": [
-    "/ai-photo-restorer/assets/client-DH5qYOYC.js"
+    "/assets/client-CX56WGTl.js"
   ],
   "node_modules/react-dom/index.js": [],
   "node_modules/react-markdown/lib/index.js": [],
@@ -205,10 +205,10 @@
   "node_modules/remark-parse/lib/index.js": [],
   "node_modules/remark-rehype/lib/index.js": [],
   "node_modules/scheduler/cjs/scheduler.production.js": [
-    "/ai-photo-restorer/assets/client-DH5qYOYC.js"
+    "/assets/client-CX56WGTl.js"
   ],
   "node_modules/scheduler/index.js": [
-    "/ai-photo-restorer/assets/client-DH5qYOYC.js"
+    "/assets/client-CX56WGTl.js"
   ],
   "node_modules/space-separated-tokens/index.js": [],
   "node_modules/style-to-js/cjs/index.js": [],
@@ -245,13 +245,13 @@
   "src/components/Spinner.tsx": [],
   "src/components/icons/index.tsx": [],
   "src/data/blogPosts/colorizing-black-and-white-photos-deep-learning.md?raw": [
-    "/ai-photo-restorer/assets/colorizing-black-and-white-photos-deep-learning-UCiaj3Ps.js"
+    "/assets/colorizing-black-and-white-photos-deep-learning-UCiaj3Ps.js"
   ],
   "src/data/blogPosts/how-to-remove-scratches-vintage-photos-ai.md?raw": [
-    "/ai-photo-restorer/assets/how-to-remove-scratches-vintage-photos-ai-B1CWtlD4.js"
+    "/assets/how-to-remove-scratches-vintage-photos-ai-B1CWtlD4.js"
   ],
   "src/data/blogPosts/restoring-water-damaged-wedding-photos.md?raw": [
-    "/ai-photo-restorer/assets/restoring-water-damaged-wedding-photos-C6qCUfCp.js"
+    "/assets/restoring-water-damaged-wedding-photos-C6qCUfCp.js"
   ],
   "src/index.css": [],
   "src/index.tsx": [],
