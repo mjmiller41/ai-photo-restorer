@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import type { RouteRecord } from 'vite-react-ssg';
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -9,22 +9,18 @@ import Contact from './pages/Contact';
 import BlogIndex from './pages/Blog/BlogIndex';
 import BlogPost from './pages/Blog/BlogPost';
 
-const App: React.FC = () => {
-	return (
-		<BrowserRouter>
-			<Routes>
-				<Route path="/" element={<MainLayout />}>
-					<Route index element={<Home />} />
-					<Route path="blog" element={<BlogIndex />} />
-					<Route path="blog/:slug" element={<BlogPost />} />
-					<Route path="privacy" element={<PrivacyPolicy />} />
-					<Route path="terms" element={<TermsOfService />} />
-					<Route path="about" element={<About />} />
-					<Route path="contact" element={<Contact />} />
-				</Route>
-			</Routes>
-		</BrowserRouter>
-	);
-};
-
-export default App;
+export const routes: RouteRecord[] = [
+	{
+		path: '/',
+		element: <MainLayout />,
+		children: [
+			{ index: true, element: <Home /> },
+			{ path: 'blog', element: <BlogIndex /> },
+			{ path: 'blog/:slug', element: <BlogPost /> },
+			{ path: 'privacy', element: <PrivacyPolicy /> },
+			{ path: 'terms', element: <TermsOfService /> },
+			{ path: 'about', element: <About /> },
+			{ path: 'contact', element: <Contact /> },
+		],
+	},
+];
