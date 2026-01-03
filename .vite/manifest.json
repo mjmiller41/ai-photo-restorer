@@ -1,0 +1,43 @@
+{
+  "_client-DH5qYOYC.js": {
+    "file": "assets/client-DH5qYOYC.js",
+    "name": "client",
+    "isDynamicEntry": true,
+    "imports": [
+      "index.html"
+    ]
+  },
+  "index.html": {
+    "file": "assets/app-BFRVsbO-.js",
+    "name": "app",
+    "src": "index.html",
+    "isEntry": true,
+    "dynamicImports": [
+      "_client-DH5qYOYC.js",
+      "src/data/blogPosts/colorizing-black-and-white-photos-deep-learning.md?raw",
+      "src/data/blogPosts/how-to-remove-scratches-vintage-photos-ai.md?raw",
+      "src/data/blogPosts/restoring-water-damaged-wedding-photos.md?raw"
+    ],
+    "css": [
+      "assets/app-DjSF6hff.css"
+    ]
+  },
+  "src/data/blogPosts/colorizing-black-and-white-photos-deep-learning.md?raw": {
+    "file": "assets/colorizing-black-and-white-photos-deep-learning-UCiaj3Ps.js",
+    "name": "colorizing-black-and-white-photos-deep-learning",
+    "src": "src/data/blogPosts/colorizing-black-and-white-photos-deep-learning.md?raw",
+    "isDynamicEntry": true
+  },
+  "src/data/blogPosts/how-to-remove-scratches-vintage-photos-ai.md?raw": {
+    "file": "assets/how-to-remove-scratches-vintage-photos-ai-B1CWtlD4.js",
+    "name": "how-to-remove-scratches-vintage-photos-ai",
+    "src": "src/data/blogPosts/how-to-remove-scratches-vintage-photos-ai.md?raw",
+    "isDynamicEntry": true
+  },
+  "src/data/blogPosts/restoring-water-damaged-wedding-photos.md?raw": {
+    "file": "assets/restoring-water-damaged-wedding-photos-C6qCUfCp.js",
+    "name": "restoring-water-damaged-wedding-photos",
+    "src": "src/data/blogPosts/restoring-water-damaged-wedding-photos.md?raw",
+    "isDynamicEntry": true
+  }
+}
