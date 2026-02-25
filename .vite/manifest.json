@@ -1,6 +1,6 @@
 {
-  "_client-CX56WGTl.js": {
-    "file": "assets/client-CX56WGTl.js",
+  "_client-DMgvmkMl.js": {
+    "file": "assets/client-DMgvmkMl.js",
     "name": "client",
     "isDynamicEntry": true,
     "imports": [
@@ -8,18 +8,18 @@
     ]
   },
   "index.html": {
-    "file": "assets/app-DJvOGRff.js",
+    "file": "assets/app-CtLgc6Vz.js",
     "name": "app",
     "src": "index.html",
     "isEntry": true,
     "dynamicImports": [
-      "_client-CX56WGTl.js",
+      "_client-DMgvmkMl.js",
       "src/data/blogPosts/colorizing-black-and-white-photos-deep-learning.md?raw",
       "src/data/blogPosts/how-to-remove-scratches-vintage-photos-ai.md?raw",
       "src/data/blogPosts/restoring-water-damaged-wedding-photos.md?raw"
     ],
     "css": [
-      "assets/app-X63P43lT.css"
+      "assets/app-amEdN08Y.css"
     ]
   },
   "src/data/blogPosts/colorizing-black-and-white-photos-deep-learning.md?raw": {
