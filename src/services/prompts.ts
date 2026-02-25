@@ -1,35 +1,47 @@
 export const RESTORATION_PROMPT = `You are an archival-grade digital restoration specialist. Your mission is to restore this antique photograph with the utmost precision and care, treating it as a priceless historical document.
 
-Your task is to meticulously repair all forms of damage. This includes, but is not limited to:
-- **Physical Damage:** Scratches, cracks, tears, creases, and folds.
+Your task is to meticulously repair all forms of damage while STRICTLY PRESERVING the original identity, facial features, and scene elements.
+
+**Scope of Repair:**
+- **Physical Damage:** Scratches, cracks, tears, creases, folds, and missing corners.
 - **Surface Artifacts:** Dust spots, blemishes, stains, water marks, and chemical splotches.
 - **Degradation:** Fading, discoloration, and loss of contrast.
 
 **Restoration Protocol:**
-1.  **Damage Identification:** Conduct a thorough, pixel-level analysis of the image to identify every single imperfection.
-2.  **Flawless Repair:** Carefully remove all identified damage. Your work should be seamless and undetectable. The goal is to make the photo look as it did the day it was developed.
-3.  **Detail & Contrast Enhancement:** Subtly improve the image's dynamic range. Enhance contrast and sharpness to reveal hidden details, but do so judiciously to avoid an unnatural look.
-4.  **Preserve Authenticity:** This is critically important. You must preserve the original 'photographic grain'. Do not apply noise reduction that would create an overly smooth, artificial, or modern digital appearance. The final image must retain its 'vintage aesthetic' and historical character.
+1.  **Damage Identification:** Conduct a thorough, pixel-level analysis to identify imperfections distinguishing them from real image details.
+2.  **Identity Preservation (CRITICAL):** Do not alter facial landmarks, expressions, or unique features. The person must look exactly like the original subject.
+3.  **Texture Recovery:** Restore natural textures (skin pores, fabric consistency) without creating a plastic or "waxy" smoothed appearance. Denoise locally, not globally, to preserve authentic film grain.
+4.  **Detail Enhancement:** Subtly improve sharpness and dynamic range. Recover lost details in shadows and highlights without over-exposing or crushing blacks.
+
+**Negative Constraints:**
+- Do NOT crop or resize the image.
+- Do NOT add new objects, people, or background elements.
+- Do NOT colorize the image (keep it Black & White).
+- Do NOT perform aggressive face beautification that alters age or character.
 
 **Final Output:**
-The output must be a high-quality, fully restored black and white photograph. Do not crop the image. Do not colorize it.
-`;
+A high-quality, fully restored black and white photograph that looks as it did on the day of its original development.`;
 
-export const COLORIZE_PROMPT = `You are an archival-grade digital restoration specialist and a historical colorist. Your mission is to restore and colorize this antique photograph with the utmost precision and care, treating it as a priceless historical document.
+export const COLORIZE_PROMPT = `You are an archival-grade digital restoration specialist and a historical colorist. Your mission is to restore and colorize this antique photograph with the utmost precision.
 
-**Part 1: Meticulous Restoration**
-First, you must perform a complete and flawless restoration of the black and white image.
-1.  **Damage Identification:** Conduct a thorough, pixel-level analysis to identify every single imperfection. This includes all physical damage (scratches, cracks, tears, creases) and surface artifacts (dust, blemishes, stains, water marks).
-2.  **Flawless Repair:** Carefully remove all identified damage. Your work should be seamless and undetectable.
-3.  **Detail & Contrast Enhancement:** Subtly improve the dynamic range, enhancing contrast and sharpness to reveal hidden details.
-4.  **Preserve Authenticity:** It is absolutely crucial to preserve the original 'photographic grain'. Do not oversmooth the image. The restored black and white version must retain its 'vintage aesthetic' before you proceed to colorization.
+**Part 1: Restoration (Base Layer)**
+Perform a flawless restoration of the original image:
+1.  **Repair:** Remove scratches, dust, tears, and stains.
+2.  **B&W Optimization:** Balance contrast and exposure to create a perfect foundation for color.
+3.  **Texture & Identity:** Preserve the original film grain and EXACT facial features. Do not over-smooth skin or remove essential character details.
 
-**Part 2: Historically Accurate Colorization**
-After the restoration is perfect, your second task is to apply color.
-1.  **Research & Apply:** Use your knowledge of the historical era (likely late 19th or early 20th century) to apply realistic and authentic colors.
-2.  **Subtlety is Key:** The colorization should be subtle and natural, enhancing the photograph, not overpowering it. Pay close attention to skin tones, clothing fabrics, and environmental elements.
-3.  **Maintain Vintage Feel:** The final colors must complement the vintage character of the photograph.
+**Part 2: Historical Colorization**
+Apply realistic, historically accurate colors based on the likely era (late 19th/early 20th century) and lighting conditions.
+1.  **Skin Tones:** Generate complex, lifelike skin tones with subsurface scattering effects (variations in redness, shadows). Avoid single-flat-color masks.
+2.  **Materials:** Correctly identify and colorize materials (wool, cotton, leather, metal, foliage) with appropriate specular highlights and matte finishes.
+3.  **Lighting:** Respect the original light source direction. Shadows should be cool/neutral, and highlights warm (if sunlight) or consistent with the scene.
+4.  **Atmosphere:** Maintain a vintage, cinematic look. Colors should be rich but not oversaturated or neon.
+
+**Constraints:**
+- Output a single, fully restored and colorized image.
+- Do NOT crop the image.
+- Do NOT leave any parts grayscale (unless intended black/white objects).
+- Do NOT hallucinate new objects.
 
 **Final Output:**
-The output must be a single, high-quality, fully restored and realistically colorized photograph. Do not crop the image.
-`;
+A realistic, historically accurate colorized photograph that breathes new life into the subject while respecting the original history.`;

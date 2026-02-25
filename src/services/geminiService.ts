@@ -1,4 +1,4 @@
-import { GoogleGenAI, Modality } from "@google/genai";
+import { GoogleGenAI, Modality, MediaResolution } from "@google/genai";
 import { fileToBase64 } from "../utils/fileUtils";
 import { RESTORATION_PROMPT, COLORIZE_PROMPT } from "./prompts";
 
@@ -13,20 +13,24 @@ export const restorePhoto = async (
     throw new Error("API_KEY environment variable is not set");
   }
 
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = new GoogleGenAI({ apiKey, apiVersion: "v1alpha" });
 
   try {
     const { base64, mimeType } = await fileToBase64(imageFile);
     const prompt = colorize ? COLORIZE_PROMPT : RESTORATION_PROMPT;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-image",
+      model: "gemini-3-pro-image-preview",
+      // @ts-ignore: MEDIA_RESOLUTION_ULTRA_HIGH is not yet in the types
       contents: {
         parts: [
           {
             inlineData: {
               data: base64,
               mimeType: mimeType,
+            },
+            mediaResolution: {
+              level: "media_resolution_ultra_high",
             },
           },
           {
@@ -38,6 +42,8 @@ export const restorePhoto = async (
         responseModalities: [Modality.IMAGE],
       },
     });
+
+    console.log(response);
 
     // Find the image part in the response
     for (const part of response.candidates?.[0]?.content?.parts || []) {
