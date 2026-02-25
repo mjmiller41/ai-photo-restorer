@@ -1,6 +1,6 @@
 {
-  "_client-DMgvmkMl.js": {
-    "file": "assets/client-DMgvmkMl.js",
+  "_client-CSjDq1PK.js": {
+    "file": "assets/client-CSjDq1PK.js",
     "name": "client",
     "isDynamicEntry": true,
     "imports": [
@@ -8,12 +8,12 @@
     ]
   },
   "index.html": {
-    "file": "assets/app-CtLgc6Vz.js",
+    "file": "assets/app-573xchqm.js",
     "name": "app",
     "src": "index.html",
     "isEntry": true,
     "dynamicImports": [
-      "_client-DMgvmkMl.js",
+      "_client-CSjDq1PK.js",
       "src/data/blogPosts/colorizing-black-and-white-photos-deep-learning.md?raw",
       "src/data/blogPosts/how-to-remove-scratches-vintage-photos-ai.md?raw",
       "src/data/blogPosts/restoring-water-damaged-wedding-photos.md?raw"
