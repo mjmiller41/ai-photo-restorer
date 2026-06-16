@@ -4,28 +4,464 @@ import ComparisonViewer from "../components/ComparisonViewer";
 import ActionButtons from "../components/ActionButtons";
 import { restorePhoto } from "../services/geminiService";
 import { UploadedImage } from "../types";
-import AdUnit from "../components/AdUnit";
+
+// ── Shared section header ──────────────────────────────────
+
+interface SectionHeadProps {
+  eyebrow: string;
+  title: string;
+  sub?: string;
+}
+
+const SectionHead: React.FC<SectionHeadProps> = ({ eyebrow, title, sub }) => (
+  <div className="text-center mx-auto mb-12" style={{ maxWidth: "var(--container-md)" }}>
+    <div className="ss-eyebrow mb-3">{eyebrow}</div>
+    <h2
+      style={{
+        fontFamily: "var(--font-display)",
+        fontSize: "clamp(30px, 3.6vw, 44px)",
+        lineHeight: 1.1,
+        color: "var(--text-strong)",
+        margin: 0,
+      }}
+    >
+      {title}
+    </h2>
+    {sub && (
+      <p
+        className="mt-3"
+        style={{ fontSize: "var(--text-md)", color: "var(--text-muted)", lineHeight: 1.55 }}
+      >
+        {sub}
+      </p>
+    )}
+  </div>
+);
+
+// ── Restore tool (centerpiece) ─────────────────────────────
+
+const SAMPLES = [
+  { id: "windmill", label: "Windmill", before: "/assets/samples/windmill-before.png", after: "/assets/samples/windmill-after.png" },
+  { id: "cabin",    label: "Cabin",    before: "/assets/samples/cabin-before.png",    after: "/assets/samples/cabin-after.png"    },
+  { id: "homestead",label: "Homestead",before: "/assets/samples/homestead-before.png",after: "/assets/samples/homestead-after.png"},
+];
+
+interface RestoreToolProps {
+  originalImage: UploadedImage | null;
+  restoredImageUrl: string | null;
+  isLoading: boolean;
+  error: string | null;
+  onImageUpload: (file: File) => void;
+  onRestore: (colorize: boolean) => void;
+  onReset: () => void;
+  setError: (e: string | null) => void;
+}
+
+const RestoreToolCard: React.FC<RestoreToolProps> = ({
+  originalImage,
+  restoredImageUrl,
+  isLoading,
+  error,
+  onImageUpload,
+  onRestore,
+  onReset,
+  setError,
+}) => {
+  const handleSample = (sample: typeof SAMPLES[0]) => {
+    // Load sample as an UploadedImage-like object by dispatching a synthetic upload
+    fetch(sample.before)
+      .then((r) => r.blob())
+      .then((blob) => {
+        const file = new File([blob], `${sample.id}-before.jpg`, { type: "image/jpeg" });
+        onImageUpload(file);
+      });
+  };
+
+  return (
+    <div
+      style={{
+        background: "var(--surface-card)",
+        borderRadius: "var(--radius-2xl)",
+        boxShadow: "var(--shadow-lg)",
+        border: "1px solid var(--border-default)",
+        padding: "var(--space-6)",
+      }}
+    >
+      {/* idle: upload zone + sample picker */}
+      {!originalImage && !isLoading && (
+        <div>
+          <ImageUploader onImageUpload={onImageUpload} setError={setError} />
+          <div className="mt-5">
+            <div
+              className="text-center mb-3"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 11,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: "var(--text-faint)",
+              }}
+            >
+              Or try a real restoration
+            </div>
+            <div className="grid grid-cols-3 gap-2.5">
+              {SAMPLES.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => handleSample(s)}
+                  className="p-0 cursor-pointer overflow-hidden transition-opacity hover:opacity-80"
+                  style={{
+                    border: "1px solid var(--border-default)",
+                    borderRadius: "var(--radius-md)",
+                    background: "var(--ink-900)",
+                    aspectRatio: "4/3",
+                  }}
+                  title={`Try ${s.label} sample`}
+                >
+                  <img
+                    src={s.before}
+                    alt={s.label}
+                    className="w-full h-full object-cover"
+                    style={{ filter: "grayscale(1) sepia(0.35) contrast(0.92)" }}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* uploaded: preview + action buttons */}
+      {originalImage && !restoredImageUrl && !isLoading && (
+        <div className="flex flex-col gap-5">
+          <div
+            className="relative overflow-hidden"
+            style={{
+              borderRadius: "var(--radius-lg)",
+              background: "var(--ink-900)",
+              aspectRatio: "4 / 3",
+            }}
+          >
+            <img
+              src={originalImage.dataUrl}
+              alt="Your photo to restore"
+              className="w-full h-full object-cover"
+              style={{ filter: "grayscale(1) sepia(0.4) contrast(0.9)" }}
+            />
+            <span
+              className="absolute top-3 left-3"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 11,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: "var(--paper-50)",
+                background: "rgba(42,32,24,0.65)",
+                backdropFilter: "blur(6px)",
+                borderRadius: "var(--radius-pill)",
+                padding: "4px 10px",
+              }}
+            >
+              Original
+            </span>
+          </div>
+          <ActionButtons
+            isLoading={isLoading}
+            restoredImageUrl={restoredImageUrl}
+            originalImageFileName={originalImage.file.name}
+            onRestore={onRestore}
+            onReset={onReset}
+          />
+        </div>
+      )}
+
+      {/* processing */}
+      {isLoading && (
+        <ActionButtons
+          isLoading={isLoading}
+          restoredImageUrl={null}
+          originalImageFileName={originalImage?.file.name}
+          onRestore={onRestore}
+          onReset={onReset}
+        />
+      )}
+
+      {/* done: comparison slider + download */}
+      {restoredImageUrl && originalImage && (
+        <div className="flex flex-col gap-5">
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                padding: "4px 12px",
+                borderRadius: "var(--radius-pill)",
+                background: "var(--success-soft)",
+                color: "var(--success)",
+                fontFamily: "var(--font-mono)",
+                fontSize: 11,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                fontWeight: 600,
+              }}
+            >
+              Restored
+            </span>
+          </div>
+          <ComparisonViewer
+            original={originalImage.dataUrl}
+            restored={restoredImageUrl}
+          />
+          <ActionButtons
+            isLoading={isLoading}
+            restoredImageUrl={restoredImageUrl}
+            originalImageFileName={originalImage.file.name}
+            onRestore={onRestore}
+            onReset={onReset}
+          />
+        </div>
+      )}
+
+      {/* error */}
+      {error && (
+        <div
+          className="mt-4 px-4 py-3 rounded-[var(--radius-md)] text-center"
+          role="alert"
+          style={{
+            background: "var(--danger-soft)",
+            border: "1px solid var(--danger)",
+            color: "var(--danger)",
+            fontSize: "var(--text-sm)",
+          }}
+        >
+          {error}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── Features section ───────────────────────────────────────
+
+const FEATURES = [
+  {
+    icon: "✂",
+    title: "Scratch & tear removal",
+    body: "We identify cracks, creases and dust, then fill them by reading the surrounding image — never a smudge.",
+    tone: "terracotta",
+  },
+  {
+    icon: "◉",
+    title: "Face recovery",
+    body: "Generative facial priors sharpen blurred faces while preserving the exact features you remember.",
+    tone: "teal",
+  },
+  {
+    icon: "◈",
+    title: "Period-accurate color",
+    body: "Black-and-white frames become vibrant with historically grounded, never-neon colorization.",
+    tone: "success",
+  },
+];
+
+const toneColors: Record<string, { bg: string; color: string }> = {
+  terracotta: { bg: "var(--accent-soft)", color: "var(--accent)" },
+  teal:       { bg: "var(--secondary-soft)", color: "var(--secondary)" },
+  success:    { bg: "var(--success-soft)", color: "var(--success)" },
+};
+
+const Features: React.FC = () => (
+  <section
+    id="features"
+    style={{ maxWidth: "var(--container-xl)", margin: "0 auto", padding: "var(--space-20) var(--space-6)" }}
+  >
+    <SectionHead
+      eyebrow="What it does"
+      title="Archival-grade repair, automatically"
+      sub="Every photo is treated as a priceless document — repaired with care, not over-smoothed into plastic."
+    />
+    <div className="grid md:grid-cols-3 gap-6">
+      {FEATURES.map((f) => {
+        const { bg, color } = toneColors[f.tone];
+        return (
+          <div
+            key={f.title}
+            className="card-hoverable"
+            style={{
+              background: "var(--surface-card)",
+              border: "1px solid var(--border-subtle)",
+              borderRadius: "var(--radius-lg)",
+              padding: "var(--space-6)",
+              boxShadow: "var(--shadow-sm)",
+            }}
+          >
+            <div
+              className="flex items-center justify-center mb-4"
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: "var(--radius-md)",
+                background: bg,
+                color,
+                fontSize: 22,
+              }}
+            >
+              {f.icon}
+            </div>
+            <h3
+              style={{
+                fontSize: "var(--text-lg)",
+                fontWeight: 600,
+                color: "var(--text-strong)",
+                margin: "0 0 8px",
+              }}
+            >
+              {f.title}
+            </h3>
+            <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: 1.6, margin: 0 }}>
+              {f.body}
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+);
+
+// ── How it works section ───────────────────────────────────
+
+const HOW_STEPS = [
+  { num: "01", title: "Upload",            body: "Drag in a JPG, PNG or WEBP up to 10MB. Processed in memory, never saved." },
+  { num: "02", title: "Choose",            body: "Restore in black & white, or restore and colorize in one pass." },
+  { num: "03", title: "Let the AI work",   body: "A few seconds while damage is mended and faces are recovered." },
+  { num: "04", title: "Compare & download",body: "Drag the slider to see the difference, then save your restored frame." },
+];
+
+const HowItWorks: React.FC = () => (
+  <section
+    id="how-it-works"
+    style={{
+      background: "var(--bg-page-alt)",
+      borderTop: "1px solid var(--border-subtle)",
+      borderBottom: "1px solid var(--border-subtle)",
+    }}
+  >
+    <div
+      style={{ maxWidth: "var(--container-xl)", margin: "0 auto", padding: "var(--space-20) var(--space-6)" }}
+    >
+      <SectionHead eyebrow="How it works" title="Four steps to a second life" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+        {HOW_STEPS.map((s) => (
+          <div
+            key={s.num}
+            style={{
+              background: "var(--surface-card)",
+              border: "1px solid var(--border-subtle)",
+              borderRadius: "var(--radius-lg)",
+              padding: "var(--space-5)",
+              boxShadow: "var(--shadow-sm)",
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 12,
+                color: "var(--text-faint)",
+                letterSpacing: "0.1em",
+                marginBottom: 12,
+              }}
+            >
+              {s.num}
+            </div>
+            <h3
+              style={{
+                fontSize: "var(--text-md)",
+                fontWeight: 600,
+                color: "var(--text-strong)",
+                margin: "0 0 6px",
+              }}
+            >
+              {s.title}
+            </h3>
+            <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: 1.55, margin: 0 }}>
+              {s.body}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+// ── FAQ section ────────────────────────────────────────────
+
+const FAQ_ITEMS = [
+  {
+    q: "Is my photo data safe?",
+    a: "Yes. Photos are processed in memory and deleted immediately after. We never store your personal images.",
+  },
+  {
+    q: "How much does it cost?",
+    a: "SnapStitch is free to use, supported by unobtrusive ads that cover our server costs.",
+  },
+  {
+    q: "What's the maximum file size?",
+    a: "We currently support images up to 10MB in JPG, PNG and WEBP.",
+  },
+];
+
+const Faq: React.FC = () => (
+  <section style={{ maxWidth: "var(--container-md)", margin: "0 auto", padding: "var(--space-20) var(--space-6)" }}>
+    <SectionHead eyebrow="Good to know" title="Frequently asked" />
+    <div className="flex flex-col gap-3">
+      {FAQ_ITEMS.map(({ q, a }) => (
+        <div
+          key={q}
+          style={{
+            background: "var(--surface-card)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: "var(--radius-lg)",
+            padding: "var(--space-5)",
+            boxShadow: "var(--shadow-sm)",
+          }}
+        >
+          <h3
+            style={{
+              fontSize: "var(--text-md)",
+              fontWeight: 600,
+              color: "var(--text-strong)",
+              margin: "0 0 8px",
+            }}
+          >
+            {q}
+          </h3>
+          <p style={{ fontSize: "var(--text-base)", color: "var(--text-muted)", lineHeight: 1.6, margin: 0 }}>
+            {a}
+          </p>
+        </div>
+      ))}
+    </div>
+  </section>
+);
+
+// ── Main Home page ─────────────────────────────────────────
 
 const Home: React.FC = () => {
-  const [originalImage, setOriginalImage] = useState<UploadedImage | null>(
-    null
-  );
+  const [originalImage, setOriginalImage] = useState<UploadedImage | null>(null);
   const [restoredImageUrl, setRestoredImageUrl] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleImageUpload = (file: File) => {
-    // Basic validation
     if (!file.type.startsWith("image/")) {
       setError("Please upload a valid image file.");
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      // 10MB limit
       setError("File size exceeds 10MB limit.");
       return;
     }
-
     const reader = new FileReader();
     reader.onload = (e) => {
       setOriginalImage({ file, dataUrl: e.target?.result as string });
@@ -37,18 +473,14 @@ const Home: React.FC = () => {
 
   const handleRestore = async (colorize: boolean) => {
     if (!originalImage) return;
-
     setIsLoading(true);
     setError(null);
     setRestoredImageUrl(null);
-
     try {
       const resultUrl = await restorePhoto(originalImage.file, colorize);
       setRestoredImageUrl(resultUrl);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "An unexpected error occurred."
-      );
+      setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     } finally {
       setIsLoading(false);
     }
@@ -62,168 +494,119 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8">
-      {!originalImage ? (
-        <>
-          <div className="text-center max-w-2xl">
-            <h2 className="text-3xl md:text-4xl mb-2">
-              Bring Your Old Photos Back to Life
-            </h2>
-            <p className="text-gray-400">
-              Bring your old photos back to life with SnapStitch. Our AI
-              automatically removes scratches, enhances details, and colorizes
-              cherished memories in seconds.
+    <>
+      {/* Hero */}
+      <section id="top" style={{ position: "relative", overflow: "hidden" }}>
+        {/* Soft radial washes */}
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "radial-gradient(120% 90% at 80% 0%, var(--teal-50) 0%, transparent 55%), radial-gradient(90% 70% at 0% 100%, var(--terracotta-50) 0%, transparent 50%)",
+            pointerEvents: "none",
+          }}
+        />
+
+        <div
+          className="relative mx-auto px-6 grid items-center gap-16"
+          style={{
+            maxWidth: "var(--container-xl)",
+            paddingTop: "var(--space-20)",
+            paddingBottom: "var(--space-16)",
+            gridTemplateColumns: "1fr 1fr",
+          }}
+        >
+          {/* Left: copy */}
+          <div>
+            <div className="ss-eyebrow mb-4">· AI Photo Restoration Studio ·</div>
+            <h1
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(40px, 5vw, 68px)",
+                lineHeight: 1.04,
+                letterSpacing: "-0.01em",
+                color: "var(--text-strong)",
+                margin: "0 0 20px",
+              }}
+            >
+              Bring your old
+              <br />
+              photos back to life.
+            </h1>
+            <p
+              style={{
+                fontSize: "var(--text-md)",
+                lineHeight: "var(--leading-relaxed)",
+                color: "var(--text-body)",
+                maxWidth: 460,
+                margin: 0,
+              }}
+            >
+              Upload a faded, scratched or torn photograph. Our AI mends the
+              damage, recovers lost faces, and can colorize a century of memories
+              — in seconds.
             </p>
-          </div>
-          <ImageUploader
-            onImageUpload={handleImageUpload}
-            setError={setError}
-          />
-        </>
-      ) : (
-        <>
-          {restoredImageUrl ? (
-            <ComparisonViewer
-              original={originalImage.dataUrl}
-              restored={restoredImageUrl}
-            />
-          ) : (
-            <div className="relative w-full max-w-4xl mx-auto aspect-square md:aspect-[4/3] rounded-lg overflow-hidden shadow-2xl bg-gray-800 flex items-center justify-center">
-              <img
-                src={originalImage.dataUrl}
-                alt="Original to be restored"
-                className="max-h-full max-w-full object-contain"
-              />
-              {isLoading && (
-                <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center">
-                  {/* Spinner is shown via ActionButtons */}
-                </div>
-              )}
+
+            {/* Trust badges */}
+            <div className="flex flex-wrap gap-2.5 mt-7">
+              {[
+                { label: "Never stored", tone: "teal" },
+                { label: "Seconds, not days", tone: "terracotta" },
+                { label: "Free to use", tone: "neutral" },
+              ].map(({ label, tone }) => (
+                <span
+                  key={label}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 5,
+                    padding: "5px 14px",
+                    borderRadius: "var(--radius-pill)",
+                    fontSize: "var(--text-xs)",
+                    fontWeight: 500,
+                    fontFamily: "var(--font-sans)",
+                    background:
+                      tone === "teal"
+                        ? "var(--teal-50)"
+                        : tone === "terracotta"
+                        ? "var(--terracotta-50)"
+                        : "var(--paper-100)",
+                    color:
+                      tone === "teal"
+                        ? "var(--teal-700)"
+                        : tone === "terracotta"
+                        ? "var(--terracotta-700)"
+                        : "var(--ink-600)",
+                  }}
+                >
+                  {label}
+                </span>
+              ))}
             </div>
-          )}
-          <div className="mt-4 h-16 flex items-center justify-center">
-            <ActionButtons
-              isLoading={isLoading}
+          </div>
+
+          {/* Right: restore tool */}
+          <div>
+            <RestoreToolCard
+              originalImage={originalImage}
               restoredImageUrl={restoredImageUrl}
-              originalImageFileName={originalImage?.file.name}
+              isLoading={isLoading}
+              error={error}
+              onImageUpload={handleImageUpload}
               onRestore={handleRestore}
               onReset={handleReset}
+              setError={setError}
             />
           </div>
-        </>
-      )}
-      {error && (
-        <div
-          className="mt-4 w-full max-w-xl bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg text-center"
-          role="alert"
-        >
-          <strong className="font-bold">Error: </strong>
-          <span className="block sm:inline">{error}</span>
         </div>
-      )}
+      </section>
 
-      <div className="w-full max-w-4xl space-y-16 text-left">
-        <AdUnit slotId="1234567890" />
-
-        <section>
-          <h2 className="text-2xl font-bold mb-6 text-white">
-            Advanced AI Photo Restoration Features
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6 text-gray-300">
-            <div className="bg-gray-800 p-6 rounded-lg">
-              <h3 className="text-xl font-semibold mb-2 text-blue-400">
-                Scratch Removal
-              </h3>
-              <p>
-                Our AI intelligently identifies and fills in scratches, tears,
-                and dust marks, seamlessly blending them with the surrounding
-                image.
-              </p>
-            </div>
-            <div className="bg-gray-800 p-6 rounded-lg">
-              <h3 className="text-xl font-semibold mb-2 text-purple-400">
-                Face Enhancement
-              </h3>
-              <p>
-                Recover lost facial details with Generative Facial Prior (GFP)
-                technology, making blurry faces sharp and recognizable again.
-              </p>
-            </div>
-            <div className="bg-gray-800 p-6 rounded-lg">
-              <h3 className="text-xl font-semibold mb-2 text-green-400">
-                Auto Colorization
-              </h3>
-              <p>
-                Transform black and white photos into vibrant color images using
-                deep learning algorithms trained on millions of historical
-                photos.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-6 text-white">
-            How to Restore Your Old Photos
-          </h2>
-          <ol className="list-decimal list-inside space-y-4 text-gray-300 bg-gray-800 p-8 rounded-lg">
-            <li className="pl-2">
-              <strong className="text-white">Upload your photo:</strong> Drag
-              and drop your image or click to select a file. We support JPG and
-              PNG formats.
-            </li>
-            <li className="pl-2">
-              <strong className="text-white">Choose options:</strong> Select
-              "Colorize" if you want to add color to a black and white image.
-            </li>
-            <li className="pl-2">
-              <strong className="text-white">Let AI work:</strong> Click
-              "Restore Photo" and wait a few seconds while our GPU-powered AI
-              processes your image.
-            </li>
-            <li className="pl-2">
-              <strong className="text-white">Download:</strong> Compare the
-              before and after, then download your restored masterpiece.
-            </li>
-          </ol>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-6 text-white">
-            Frequently Asked Questions
-          </h2>
-          <div className="space-y-4">
-            <div className="bg-gray-800 p-6 rounded-lg">
-              <h3 className="font-semibold text-lg mb-2 text-white">
-                Is my photo data safe?
-              </h3>
-              <p className="text-gray-300">
-                Yes. Your photos are processed in memory and are strictly
-                deleted immediately after processing. We do not store your
-                personal images.
-              </p>
-            </div>
-            <div className="bg-gray-800 p-6 rounded-lg">
-              <h3 className="font-semibold text-lg mb-2 text-white">
-                How much does it cost?
-              </h3>
-              <p className="text-gray-300">
-                SnapStitch is currently free to use. We are supported by ads to
-                cover our server costs.
-              </p>
-            </div>
-            <div className="bg-gray-800 p-6 rounded-lg">
-              <h3 className="font-semibold text-lg mb-2 text-white">
-                What is the maximum file size?
-              </h3>
-              <p className="text-gray-300">
-                We currently support images up to 10MB.
-              </p>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
+      <Features />
+      <HowItWorks />
+      <Faq />
+    </>
   );
 };
 

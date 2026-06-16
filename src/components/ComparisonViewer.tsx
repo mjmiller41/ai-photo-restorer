@@ -1,10 +1,16 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 
 interface ComparisonViewerProps {
   original: string;
   restored: string;
 }
+
+const ChevronIcon: React.FC = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15 18l-6-6 6-6" />
+    <path d="M9 18l6-6-6-6" transform="translate(6 0)" />
+  </svg>
+);
 
 const ComparisonViewer: React.FC<ComparisonViewerProps> = ({ original, restored }) => {
   const [sliderPosition, setSliderPosition] = useState(50);
@@ -15,8 +21,7 @@ const ComparisonViewer: React.FC<ComparisonViewerProps> = ({ original, restored 
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     let newPosition = ((clientX - rect.left) / rect.width) * 100;
-    if (newPosition < 0) newPosition = 0;
-    if (newPosition > 100) newPosition = 100;
+    newPosition = Math.max(0, Math.min(100, newPosition));
     setSliderPosition(newPosition);
   };
 
@@ -30,39 +35,57 @@ const ComparisonViewer: React.FC<ComparisonViewerProps> = ({ original, restored 
     handleMove(e.touches[0].clientX);
   };
 
-  const handleMouseDown = () => setIsDragging(true);
-  const handleMouseUp = () => setIsDragging(false);
-  const handleTouchStart = () => setIsDragging(true);
-  const handleTouchEnd = () => setIsDragging(false);
-
   useEffect(() => {
+    const onMouseUp = () => setIsDragging(false);
+    const onTouchEnd = () => setIsDragging(false);
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('mouseup', onMouseUp);
     window.addEventListener('touchmove', handleTouchMove);
-    window.addEventListener('touchend', handleTouchEnd);
-
+    window.addEventListener('touchend', onTouchEnd);
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mouseup', onMouseUp);
       window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('touchend', onTouchEnd);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDragging]);
+
+  const chipStyle: React.CSSProperties = {
+    fontFamily: 'var(--font-mono)',
+    fontSize: 11,
+    fontWeight: 500,
+    letterSpacing: '0.1em',
+    textTransform: 'uppercase',
+    color: 'var(--paper-50)',
+    background: 'rgba(42, 32, 24, 0.65)',
+    backdropFilter: 'blur(6px)',
+    borderRadius: 'var(--radius-pill)',
+    padding: '4px 10px',
+  };
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full max-w-4xl mx-auto aspect-square md:aspect-[4/3] rounded-lg overflow-hidden select-none shadow-2xl bg-gray-900 cursor-e-resize"
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleTouchStart}
+      className="relative w-full select-none cursor-ew-resize"
+      style={{
+        aspectRatio: '4 / 3',
+        borderRadius: 'var(--radius-lg)',
+        overflow: 'hidden',
+        background: 'var(--ink-900)',
+        boxShadow: 'var(--shadow-photo)',
+      }}
+      onMouseDown={() => setIsDragging(true)}
+      onTouchStart={() => setIsDragging(true)}
     >
+      {/* Restored image (full bleed, back layer) */}
       <img
         src={restored}
         alt="Restored"
-        className="absolute inset-0 w-full h-full object-contain"
+        className="absolute inset-0 w-full h-full object-cover"
         draggable="false"
       />
+
+      {/* Original image clipped to left of slider */}
       <div
         className="absolute inset-0 w-full h-full overflow-hidden"
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
@@ -70,22 +93,45 @@ const ComparisonViewer: React.FC<ComparisonViewerProps> = ({ original, restored 
         <img
           src={original}
           alt="Original"
-          className="absolute inset-0 w-full h-full object-contain"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ filter: 'grayscale(1) sepia(0.4) contrast(0.9)' }}
           draggable="false"
         />
       </div>
+
+      {/* Divider line + handle */}
       <div
-        className="absolute top-0 bottom-0 w-1 bg-amber-400/80 pointer-events-none"
-        style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+        className="absolute top-0 bottom-0 pointer-events-none"
+        style={{
+          left: `${sliderPosition}%`,
+          transform: 'translateX(-50%)',
+          width: 2,
+          background: 'white',
+        }}
       >
-        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-10 w-10 rounded-full bg-amber-400 flex items-center justify-center shadow-lg">
-          <svg className="w-6 h-6 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-          </svg>
+        <div
+          className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto"
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: '50%',
+            background: 'var(--accent)',
+            border: '2px solid white',
+            boxShadow: 'var(--shadow-md)',
+            color: 'white',
+          }}
+        >
+          <ChevronIcon />
         </div>
       </div>
-       <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">ORIGINAL</div>
-       <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">RESTORED</div>
+
+      {/* Chips */}
+      <span className="absolute top-3 left-3" style={chipStyle}>
+        Original
+      </span>
+      <span className="absolute top-3 right-3" style={chipStyle}>
+        Restored
+      </span>
     </div>
   );
 };
